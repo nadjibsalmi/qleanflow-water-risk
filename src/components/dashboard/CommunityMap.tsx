@@ -95,9 +95,9 @@ export function CommunityMap({ records }: CommunityMapProps) {
             }}
           />
           <Scatter data={points}>
-            {points.map((p, i) => (
+            {points.map((p) => (
               <Cell
-                key={`${p.community}-${p.region}-${i}`}
+                key={p.community}
                 fill={colorFor(p.contamination, p.isMiningZone)}
                 fillOpacity={0.65}
               />
