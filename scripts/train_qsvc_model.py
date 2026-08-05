@@ -189,7 +189,11 @@ export = {
     "supportVectors": support_vector_angles.tolist(),  # shape (n_sv, 4), each in [0, pi]
     "dualCoef": clf.dual_coef_[0].tolist(),  # shape (n_sv,)
     "intercept": float(clf.intercept_[0]),
-    # Platt scaling: P(y=1|f) = 1 / (1 + exp(A*f + B))
+    # Platt scaling, convention libsvm réellement utilisée par scikit-learn :
+    # P(y=1|f) = 1 / (1 + exp(A*f - B))
+    # (vérifié empiriquement contre predict_proba() côté Python — voir le
+    # commentaire détaillé dans src/algorithms/qsvcEstimator.ts, seule source
+    # de vérité pour cette formule côté TypeScript.)
     "plattA": float(clf.probA_[0]),
     "plattB": float(clf.probB_[0]),
     "metrics": {"accuracy": accuracy, "f1": f1, "auroc": auroc},
