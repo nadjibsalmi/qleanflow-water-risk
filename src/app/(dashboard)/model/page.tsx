@@ -27,11 +27,11 @@ export default function ModelPage() {
       <Header title="Model" />
       <main className="flex-1 p-6 space-y-6">
         <p className="text-sm text-muted max-w-2xl">
-          The trained classification approaches use the same PCA-reduced feature set and are
-          compared on accuracy, F1, and ROC-AUC. A majority-class baseline is shown first so
-          every reported score can be read against the dataset&apos;s class imbalance. The
-          configuration below reflects the original hackathon training run this project is
-          based on.
+          The trained classification approaches use the same PCA-reduced feature set and
+          are compared on accuracy, F1, and ROC-AUC. A majority-class baseline is shown
+          first so every reported score can be read against the dataset&apos;s class
+          imbalance. The configuration below reflects the original hackathon training run
+          this project is based on.
         </p>
 
         <div className="rounded-lg bg-accent-soft border border-accent/30 px-4 py-3 text-sm text-accent max-w-2xl">
@@ -41,8 +41,9 @@ export default function ModelPage() {
           <Link href="/" className="underline">
             Live Quantum Risk Estimator
           </Link>{" "}
-          on the Overview page uses a QSVC retrained on the checked-in proof-of-concept CSV (18 raw
-          features, 400/100 train/test split), which measures 78.0% accuracy - see{" "}
+          on the Overview page uses a QSVC retrained on the checked-in proof-of-concept
+          CSV (18 raw features, 400/100 train/test split), which measures 78.0% accuracy -
+          see{" "}
           <a
             href="https://github.com/nadjibsalmi/qleanflow-quantum/blob/main/notebooks/qsvc_live_demo.ipynb"
             className="underline"

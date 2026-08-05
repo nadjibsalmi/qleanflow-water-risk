@@ -6,8 +6,8 @@ export default function NotFound() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
       <Card className="w-full max-w-lg text-center" title="This view is not available">
         <p className="text-sm leading-relaxed text-muted">
-          The QleanFlow route you requested does not exist. Return to the overview
-          to continue exploring Ghana water-risk indicators.
+          The QleanFlow route you requested does not exist. Return to the overview to
+          continue exploring Ghana water-risk indicators.
         </p>
         <Link
           href="/"

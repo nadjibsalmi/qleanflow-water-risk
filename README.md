@@ -37,12 +37,12 @@ documented in `docs/MODEL.md`.
 
 The checked-in model comparison reports:
 
-| Reference | Accuracy | Notes |
-| --- | ---: | --- |
-| Majority class | 74.6% | 373 of 500 labeled rows |
-| Classical SVM | 79.8% ± 2.8% | Stratified five-fold cross-validation |
-| QSVC | 78.0% | Fixed hold-out evaluation used by the browser estimator |
-| QNN | Not captured | Historical reference only |
+| Reference      |     Accuracy | Notes                                                   |
+| -------------- | -----------: | ------------------------------------------------------- |
+| Majority class |        74.6% | 373 of 500 labeled rows                                 |
+| Classical SVM  | 79.8% ± 2.8% | Stratified five-fold cross-validation                   |
+| QSVC           |        78.0% | Fixed hold-out evaluation used by the browser estimator |
+| QNN            | Not captured | Historical reference only                               |
 
 These figures are intended for transparent comparison. They should not be
 interpreted as a validated production model or as evidence of causal impact.

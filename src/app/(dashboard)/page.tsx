@@ -27,8 +27,7 @@ export default async function OverviewPage() {
         <div>
           <p className="text-sm text-muted max-w-2xl">
             Live risk assessment across {stats.totalCommunities} labeled rows representing
-            communities in
-            mining-affected regions of Ghana, covering roughly{" "}
+            communities in mining-affected regions of Ghana, covering roughly{" "}
             {stats.totalPopulation.toLocaleString()} people.
           </p>
         </div>
