@@ -30,7 +30,7 @@ const RISK_COLORS: Record<RiskLevel, string> = {
  * The flagship interactive feature: a real quantum kernel computation
  * (see algorithms/quantumSimulator.ts + qsvcEstimator.ts) runs entirely in
  * the browser as the user adjusts inputs. This replaces the earlier
- * earlier classical logistic-regression-based estimator. The QSVC's historical
+ * classical logistic-regression-based estimator. The QSVC's historical
  * notebook score was 83.33%; the current classical SVM reference is reported
  * as 79.8% +/- 2.8% across five folds, while the QNN's final accuracy was
  * never captured (see config/model.ts).
