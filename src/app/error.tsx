@@ -21,8 +21,8 @@ export default function Error({
     <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
       <Card className="w-full max-w-lg text-center" title="The dashboard hit a snag">
         <p className="text-sm leading-relaxed text-muted">
-          QleanFlow could not finish loading this view. Your data is safe; try the
-          request again or return to the overview.
+          QleanFlow could not finish loading this view. Your data is safe; try the request
+          again or return to the overview.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button

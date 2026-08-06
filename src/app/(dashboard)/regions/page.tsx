@@ -14,8 +14,8 @@ export default async function RegionsPage() {
       <main className="flex-1 p-6 space-y-6">
         <p className="text-sm text-muted max-w-2xl">
           Regional breakdown of all {regions.reduce((s, r) => s + r.totalCommunities, 0)}{" "}
-          labeled rows in the bundled proof-of-concept CSV, ranked by average contamination
-          level.
+          labeled rows in the bundled proof-of-concept CSV, ranked by average
+          contamination level.
         </p>
 
         <Card

@@ -29,13 +29,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("recharts", () => {
-  function Shell({
-    testId,
-    children,
-  }: {
-    testId: string;
-    children?: React.ReactNode;
-  }) {
+  function Shell({ testId, children }: { testId: string; children?: React.ReactNode }) {
     return <div data-testid={testId}>{children}</div>;
   }
 
@@ -108,14 +102,19 @@ describe("dashboard components", () => {
     render(<Sidebar />);
 
     expect(screen.getByText("QleanFlow")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Model" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Model" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
   });
 
   it("renders the Header title and theme control", () => {
     render(<Header title="Overview" />);
 
     expect(screen.getByRole("heading", { name: "Overview" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Toggle color theme" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Toggle color theme" })
+    ).toBeInTheDocument();
   });
 
   it("renders the CommunityMap accessibility summary for its records", () => {
@@ -155,6 +154,8 @@ describe("dashboard components", () => {
     expect(screen.getByRole("dialog", { name: "Navigation menu" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Close menu" }));
-    expect(screen.queryByRole("dialog", { name: "Navigation menu" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("dialog", { name: "Navigation menu" })
+    ).not.toBeInTheDocument();
   });
 });

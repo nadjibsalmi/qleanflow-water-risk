@@ -108,16 +108,18 @@ describe("CSV aggregations", () => {
 
     expect(records).toHaveLength(500);
     expect(records.every((record) => record.community.length > 0)).toBe(true);
-    expect(records.every((record) => record.waterQuality === 0 || record.waterQuality === 1)).toBe(
-      true
-    );
+    expect(
+      records.every((record) => record.waterQuality === 0 || record.waterQuality === 1)
+    ).toBe(true);
   });
 
   it("aggregates regions into all 500 records and sorts by contamination", async () => {
     const summaries = await getRegionSummaries();
 
     expect(summaries.length).toBeGreaterThan(1);
-    expect(summaries.reduce((total, summary) => total + summary.totalCommunities, 0)).toBe(500);
+    expect(
+      summaries.reduce((total, summary) => total + summary.totalCommunities, 0)
+    ).toBe(500);
     expect(summaries.every((summary) => summary.goodQualityPct >= 0)).toBe(true);
     expect(
       summaries.every(
@@ -153,7 +155,9 @@ describe("CSV aggregations", () => {
       )
     ).toBe(true);
     expect(
-      sources.every((item, index) => index === 0 || sources[index - 1].count >= item.count)
+      sources.every(
+        (item, index) => index === 0 || sources[index - 1].count >= item.count
+      )
     ).toBe(true);
   });
 });

@@ -44,11 +44,10 @@ export default function MethodologyPage() {
             learning methods are most plausible to evaluate meaningfully, since they
             don&apos;t yet scale to large feature spaces on real hardware or realistic
             simulators. Three trained approaches use identical preprocessed data so their
-            performance is directly comparable: a classical SVM, a Quantum SVC (a classical
-            SVM using a quantum-computed kernel), and a Quantum Neural Network (a variational
-            circuit trained end-to-end with gradient descent). A majority-class reference is
-            shown separately. See
-            the{" "}
+            performance is directly comparable: a classical SVM, a Quantum SVC (a
+            classical SVM using a quantum-computed kernel), and a Quantum Neural Network
+            (a variational circuit trained end-to-end with gradient descent). A
+            majority-class reference is shown separately. See the{" "}
             <Link href="/model" className="text-accent hover:underline">
               Model
             </Link>{" "}
@@ -67,9 +66,9 @@ export default function MethodologyPage() {
             <li>
               The CSV&apos;s external provenance and collection process are not documented
               in this repository. Repeated community names with different measurements
-              indicate that it is best treated as a generated or assembled proof-of-concept
-              dataset, not as verified field data or a continuously updated government or
-              NGO monitoring system.
+              indicate that it is best treated as a generated or assembled
+              proof-of-concept dataset, not as verified field data or a continuously
+              updated government or NGO monitoring system.
             </li>
             <li>
               A predicted &quot;safe&quot; classification is a risk-triage signal to
