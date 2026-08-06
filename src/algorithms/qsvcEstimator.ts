@@ -40,17 +40,10 @@ export interface QsvcResult {
   /**
    * Binary classification, thresholded at goodQualityProbability >= 0.5.
    *
-   * AUDIT FIX: this was previously derived from `decisionValue >= 0`
-   * (the raw, uncalibrated SVM decision boundary) while `riskLevel` was
-   * derived from `goodQualityProbability` (the Platt-scaled, calibrated
-   * probability). Because Platt scaling's calibration curve does not
-   * cross exactly at decisionValue=0 <-> probability=0.5, this created a
-   * real, reproducible input range (contaminationLevel roughly 8.9-9.7 at
-   * default slider values for the other inputs) where predictedLabel=1
-   * ("good") while riskLevel="high" simultaneously - a visible
-   * contradiction in the UI. Both fields must be derived from the SAME
-   * single source of truth (the calibrated probability) so they can
-   * never disagree by construction.
+   * Both `predictedLabel` and `riskLevel` are derived from the calibrated
+   * probability. The raw SVM decision boundary is not interchangeable with
+   * the Platt-scaled probability threshold, so using one source of truth
+   * keeps the two classifications consistent.
    */
   predictedLabel: 0 | 1;
   riskLevel: RiskLevel;
@@ -83,17 +76,11 @@ function classify(goodQualityProbability: number): {
 }
 
 /**
- * AUDIT FIX (type safety): previously `Record<string, number>`, a
- * "stringly-typed" map with no compile-time link between its keys and
- * `QSVC_PARAMS.featureNames`. A typo in either place would silently and
- * permanently freeze that feature at its dataset mean, with zero
- * compiler error and zero runtime warning.
- *
- * `FeatureName` is now derived directly from the actual data
- * (`typeof QSVC_PARAMS`), so `userProvided`'s keys are checked against
- * the real feature list at compile time - renaming or typo-ing a feature
- * name in either qsvcParams.ts (regenerated from Python) or here is now
- * a compile error, not a silent data bug.
+ * `FeatureName` is derived directly from the model data
+ * (`typeof QSVC_PARAMS`), so `userProvided` keys are checked against the
+ * actual feature list at compile time. A renamed or misspelled feature
+ * therefore fails compilation instead of silently falling back to its
+ * dataset mean.
  */
 type FeatureName = (typeof QSVC_PARAMS)["featureNames"][number];
 
@@ -147,21 +134,10 @@ export function applyPca(standardized: number[]): number[] {
 }
 
 /**
- * AUDIT FIX, corrected after a regression was caught by the pipeline
- * cross-verification test (qsvcPipeline.test.ts):
- *
- * Attempt 1 (reverted): unconditionally clamp `normalized` to [0, 1]
- * before multiplying by pi. This looked like sound defensive programming,
- * but it silently altered a LEGITIMATE result: the real held-out test
- * point used for cross-verification produces a third PCA component whose
- * normalized value is -0.00227 - a hair past the trained boundary due to
- * ordinary floating-point/interpolation noise, not a wild extrapolation.
- * scikit-learn's MinMaxScaler does not clip by default either (clip=False
- * is the default), so the REAL trained Python model legitimately produces
- * this same tiny-negative angle. Clamping it to exactly 0 changed the
- * quantum kernel value enough to shift decisionValue by ~4e-4 versus the
- * real model - a direct violation of "zero approximation" fidelity to
- * the actual trained system.
+ * The trained MinMaxScaler uses unclipped values. A PCA component can land
+ * slightly outside [0, 1] because of ordinary floating-point or
+ * interpolation noise near a fitted boundary; clamping such a value would
+ * alter the quantum kernel and reduce fidelity with the trained model.
  *
  * RY(theta) is mathematically well-defined and periodic for ANY real
  * theta (negative, or beyond pi) - there is no crash risk from an
@@ -177,8 +153,8 @@ export function applyPca(standardized: number[]): number[] {
  * noise right at the trained boundary (empirically, real data points can
  * land a few thousandths outside [0,1]) without ever triggering on that.
  * Only genuinely out-of-distribution queries (more than 50% of the full
- * trained range beyond either edge) are flagged - loud, not silent - so
- * this is observable without ever corrupting a legitimate value.
+ * trained range beyond either edge) are flagged so the condition is
+ * observable without altering a legitimate value.
  */
 const ANGLE_BOUNDARY_TOLERANCE = 0.05;
 
@@ -192,9 +168,8 @@ export function scaleToAngles(pcaComponents: number[]): number[] {
       normalized > 1 + ANGLE_BOUNDARY_TOLERANCE
     ) {
       // Genuinely far outside the domain the SVC was calibrated on -
-      // surfaced as a warning (visible, actionable) rather than silently
-      // clamped (invisible, and would corrupt the exact result for
-      // legitimate near-boundary values as the reverted attempt did).
+      // Surface a warning rather than silently clamping the value, which
+      // would corrupt the exact result for legitimate near-boundary inputs.
       console.warn(
         `[qsvcEstimator] PCA component ${i} produced a normalized value of ` +
           `${normalized.toFixed(4)}, well outside the [0, 1] range the ` +
@@ -204,10 +179,9 @@ export function scaleToAngles(pcaComponents: number[]): number[] {
       );
     }
 
-    // No alteration of the value itself - RY(theta) is mathematically
-    // valid for any real theta, and this preserves exact fidelity with
-    // the real trained model's behavior (verified: matches scikit-learn's
-    // own un-clipped MinMaxScaler.transform() output exactly).
+    // RY(theta) is mathematically valid for any real theta. Keeping the
+    // unclipped value preserves fidelity with scikit-learn's
+    // MinMaxScaler.transform() behavior.
     return normalized * Math.PI;
   });
 }

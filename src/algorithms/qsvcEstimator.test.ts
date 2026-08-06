@@ -9,15 +9,11 @@ const baseline = {
   educationYears: 7,
 };
 
-describe("estimateQsvcRisk - predictedLabel/riskLevel consistency (audit fix regression test)", () => {
+describe("estimateQsvcRisk - predictedLabel/riskLevel consistency", () => {
   it("never disagrees between predictedLabel and riskLevel across the full contamination range", () => {
-    // AUDIT FIX regression test: predictedLabel and riskLevel were
-    // previously derived from two different values (raw decisionValue
-    // sign vs. calibrated probability), which disagreed for
-    // contaminationLevel roughly 8.9-9.7. Sweeping the full realistic
-    // slider range here (0-10, matching QuantumRiskEstimator.tsx) proves
-    // the fix holds everywhere, not just at the one value that exposed
-    // the original bug.
+    // Sweep the full realistic slider range (0-10, matching
+    // QuantumRiskEstimator.tsx) to ensure both classifications remain
+    // consistent across all supported contamination values.
     for (let c = 0; c <= 10; c += 0.1) {
       const result = estimateQsvcRisk({ ...baseline, contaminationLevel: c });
 

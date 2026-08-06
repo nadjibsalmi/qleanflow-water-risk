@@ -1,18 +1,10 @@
 @import "tailwindcss";
 
 /*
- * AUDIT FIX (global consistency): without this declaration, Tailwind v4's
- * `dark:` utility prefix defaults to `@media (prefers-color-scheme: dark)`,
- * which is DECOUPLED from this app's actual dark-mode mechanism - a
- * manually-toggled `.dark` class on <html> (see layout.tsx's inline
- * anti-FOUC script and Header.tsx's toggle button), which explicitly lets
- * a user's saved preference override their OS setting. Before this fix,
- * `dark:` was never used anywhere in the codebase (verified via grep), so
- * there was no active bug yet - but it was a live trap: the first `dark:`
- * utility class written anywhere would have silently followed the OS
- * theme instead of the user's actual in-app choice. Declaring this custom
- * variant makes `dark:` utilities consistent with the same `.dark` class
- * every design token in this file already keys off of.
+ * The custom variant makes Tailwind's `dark:` utilities follow the same
+ * manually toggled `.dark` class on <html> as the application's theme
+ * script and design tokens, so saved preferences take precedence over the
+ * operating system setting.
  */
 @custom-variant dark (&:where(.dark, .dark *));
 

@@ -9,7 +9,7 @@ import {
   mapRow,
 } from "./waterQualityData";
 
-describe("safeNumber (audit fix: NaN handling centralized at ingestion)", () => {
+describe("safeNumber (NaN handling centralized at ingestion)", () => {
   it("returns the parsed value for well-formed input", () => {
     expect(safeNumber("5.5", parseFloat, "testField", "Test Town")).toBe(5.5);
   });
@@ -34,7 +34,7 @@ describe("safeNumber (audit fix: NaN handling centralized at ingestion)", () => 
   });
 });
 
-describe("mapRow (audit fix regression test: no field can produce NaN in a mapped record)", () => {
+describe("mapRow (no field can produce NaN in a mapped record)", () => {
   const baseRow: Record<string, string> = {
     Community: "Test Town",
     Region: "Ashanti",

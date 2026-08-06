@@ -6,18 +6,10 @@ import { estimateQsvcRisk, type RiskLevel } from "@/algorithms/qsvcEstimator";
 import { QSVC_PARAMS } from "@/algorithms/data/qsvcParams";
 
 /**
- * AUDIT FIX (round 3): previously `Record<string, string>` - the exact
- * same stringly-typed pattern fixed for FEATURE_INDEX in the round-2
- * audit, just not yet applied here. `estimateQsvcRisk()` returns a real
- * `RiskLevel` union type (`"low" | "moderate" | "high" | "critical"`),
- * but this lookup object wasn't typed against it - so a typo'd key, or a
- * future 5th risk level added to the union without updating this map,
- * would compile cleanly and silently render `undefined` as a CSS
- * className at runtime (a blank/broken style, not a crash, but exactly
- * the class of silent regression Directive #3 targets). `Record<RiskLevel,
- * string>` makes TypeScript require all 4 keys, exactly once each, with
- * no extras and no typos - verified by deliberately removing one key and
- * confirming `tsc --noEmit` fails with a missing-property error.
+ * Keep the color map synchronized with the `RiskLevel` union. The
+ * `Record<RiskLevel, string>` type requires every risk level exactly once,
+ * preventing a misspelled or newly added level from rendering without a
+ * corresponding class name.
  */
 const RISK_COLORS: Record<RiskLevel, string> = {
   low: "text-success",

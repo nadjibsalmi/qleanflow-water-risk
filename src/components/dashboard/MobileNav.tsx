@@ -8,21 +8,10 @@ import { cn } from "@/utils/cn";
 import { NAV_ITEMS } from "./navItems";
 
 /**
- * BEFORE: the Sidebar component used `hidden lg:flex`, meaning below the
- * lg breakpoint (most phones and small tablets) the entire navigation
- * simply disappeared with no replacement - there was no way to move
- * between pages at all on mobile. This is a real, significant responsive
- * gap, not a cosmetic one.
- *
- * AFTER: a hamburger button (visible only below lg) opens a slide-over
- * drawer with the same navigation, keyboard-dismissible (Escape) and
- * dismissible by tapping the backdrop.
- *
- * A later audit found this drawer, while functional, wasn't actually a
- * proper accessible dialog: no role="dialog"/aria-modal, no focus trap
- * (Tab could escape to the page behind the backdrop), no body scroll
- * lock, and focus was never returned to the trigger button on close.
- * All four are fixed below.
+ * On smaller screens, a hamburger button opens a slide-over drawer with
+ * the same navigation. Escape and the backdrop close it; focus is moved
+ * into the dialog, trapped while it is open, and returned to the trigger
+ * when it closes. Body scrolling is locked during the interaction.
  */
 export function MobileNav() {
   const pathname = usePathname();

@@ -1,30 +1,9 @@
 // Exported model parameters. Regenerate with scripts/train_qsvc_model.py.
 // Regenerate with: python scripts/train_qsvc_model.py
-//
-// AUDIT FIX: this file previously exported QSVC_PARAMS typed against an
-// explicit `interface QsvcParams { featureNames: string[]; ... }` via a
-// plain `: QsvcParams` annotation, which widens every array entry to
-// plain `string` - defeating any attempt elsewhere in the codebase to
-// derive a literal union type from `featureNames` (e.g.
-// `(typeof QSVC_PARAMS)["featureNames"][number]` silently resolved to
-// `string`, not a real union, so a typo'd feature name compiled with
-// zero error).
-//
-// Fix, in two parts:
-//  1. `as const` on the `featureNames` array literal specifically, so
-//     TypeScript infers a real readonly tuple of string literals there.
-//  2. `satisfies QsvcParams` instead of a `: QsvcParams` type annotation.
-//     A plain `:` annotation would have re-widened `featureNames` back
-//     down to the interface's declared `readonly string[]`, silently
-//     discarding the literal tuple `as const` just produced and
-//     reintroducing the exact same bug. `satisfies` validates the object
-//     shape against the interface WITHOUT erasing the more specific
-//     inferred type - this is the actual fix; `as const` alone on this
-//     one field was necessary but not sufficient.
-//
-// `FeatureName` derived from this in qsvcEstimator.ts is now a real,
-// closed union - a typo'd key is a genuine compile error, verified by
-// deliberately injecting one and confirming `tsc --noEmit` fails.
+// `as const` preserves the feature names as a literal tuple, while
+// `satisfies QsvcParams` validates the complete object without widening that
+// tuple to `readonly string[]`. This lets consumers derive a closed
+// `FeatureName` union and have misspelled feature keys rejected at compile time.
 
 interface QsvcParams {
   featureNames: readonly string[];

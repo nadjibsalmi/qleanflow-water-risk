@@ -45,29 +45,9 @@ function toBool(v: string): boolean {
 }
 
 /**
- * AUDIT FIX (round 3 - defensive programming, single source of truth):
- *
- * Previously, a malformed numeric CSV cell (`parseFloat`/`parseInt`
- * producing NaN) was only *detected* - a `console.warn` fired, but the
- * NaN value itself was left in the record and propagated downstream.
- * Every consumer of `CommunityRecord[]` (getRegionSummaries,
- * getOverallStats, getContaminationTypeDistribution, ...) would then
- * silently produce NaN in whatever aggregate touched that field - and
- * only ONE of the four numeric reduces in this file (`population`) had
- * been given an ad-hoc `|| 0` guard to work around this, while
- * `diseasePrevalence`, `waterAccessScore`, and `contaminationLevel` had
- * none. That's not a fix, it's an inconsistent patch at the wrong layer:
- * defensive handling scattered across call sites instead of centralized
- * at the one place data enters the system.
- *
- * Fix: substitute a safe fallback (0) for any malformed numeric field
- * *here*, at ingestion - the single source of truth for data validity -
- * so every downstream consumer can safely assume a `CommunityRecord`
- * never contains NaN, full stop. The warning is upgraded from
- * "FYI, ignore this" to "this happened AND was corrected to 0", and the
- * ad-hoc `|| 0` guard on `population` downstream is removed as
- * redundant, since it's now guaranteed at the source instead of hoped
- * for at the point of use.
+ * Numeric CSV values are normalized at ingestion so every downstream
+ * consumer can rely on `CommunityRecord` never containing `NaN`. Malformed
+ * values produce a warning and use the safe fallback `0`.
  */
 export function safeNumber(
   raw: string,
@@ -170,16 +150,8 @@ export function mapRow(row: RawRow): CommunityRecord {
 let cachedRecordsPromise: Promise<CommunityRecord[]> | null = null;
 
 /**
- * BEFORE: this cached only the resolved array (`if (cachedRecords) return
- * cachedRecords`), which does nothing for concurrent calls that arrive
- * before the first one finishes - each one saw `cachedRecords === null`
- * and independently read + parsed the CSV from disk. This is exactly
- * what happened on every cold-start load of the Regions page, which
- * calls `getRegionSummaries()` (which itself calls `getAllRecords()`)
- * and `getAllRecords()` directly in the same `Promise.all`.
- *
- * AFTER: the in-flight Promise itself is cached, so concurrent callers
- * all await the same single read+parse operation.
+ * Cache the in-flight read and parse operation so concurrent callers await
+ * one shared CSV load instead of repeating the disk read and parsing work.
  */
 export async function getAllRecords(): Promise<CommunityRecord[]> {
   if (!cachedRecordsPromise) {
@@ -211,15 +183,9 @@ export async function getAllRecords(): Promise<CommunityRecord[]> {
 }
 
 /**
- * AUDIT FIX (round 3 - eliminate duplicated aggregation logic):
- * every "percentage of records matching a predicate" calculation below
- * previously repeated the identical
- * `round((list.filter(predicate).length / list.length) * 100, 1)`
- * expression inline, 5 separate times across this file. Centralizing it
- * here means the rounding precision and the underlying formula have
- * exactly one definition - Directive #2's "source unique de vérité"
- * applied to a real, verifiable duplication, not just the more obvious
- * cross-file kind.
+ * Calculate a rounded percentage for records matching a predicate. Keeping
+ * the empty-list behavior and rounding in one helper keeps all summaries
+ * consistent.
  */
 function percentageMatching<T>(list: T[], predicate: (item: T) => boolean): number {
   if (list.length === 0) return 0;
